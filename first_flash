@@ -1,0 +1,31 @@
+#!/bin/bash -e
+if [ ! -f "$1" ]; then
+	echo "$0 [Firmware image]"
+	exit 1
+fi
+
+# Reset at slow speed
+avrdude -V -P usb -B 10 -p m8 -c avrispmkII
+
+# Reprogram the fuses to their final configuration
+# WDTON, BOD at 2.7V, internal RC oscillator at 4 MHz, 6 CK + 64 ms
+avrdude -V -P usb -B 10 -p m8 -c avrispmkII -U lfuse:w:0xa3:m -U hfuse:w:0x99:m 
+
+# Reset at high speed
+avrdude -V -P usb -B 2 -p m8 -c avrispmkII
+
+# Then program the firmware
+make program
+
+# Reset
+sleep 1
+make reset
+
+# Wait a bit
+sleep 3
+
+# Load the program
+./rs232_program.py "$1"
+
+# Reset
+make reset

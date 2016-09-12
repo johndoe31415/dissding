@@ -1,0 +1,21 @@
+AVR_TOOLCHAIN_DIRECTORY := /home/joe/bin/gcc/avr/
+AVR_LIBC_DIRECTORY := $(AVR_TOOLCHAIN_DIRECTORY)avr/
+#AVR_TOOLCHAIN_DIRECTORY := /usr/
+#AVR_LIBC_DIRECTORY := $(AVR_TOOLCHAIN_DIRECTORY)avr/
+
+CC := $(AVR_TOOLCHAIN_DIRECTORY)bin/avr-gcc
+NM := $(AVR_TOOLCHAIN_DIRECTORY)bin/avr-nm
+OBJCOPY := $(AVR_TOOLCHAIN_DIRECTORY)bin/avr-objcopy
+OBJDUMP := $(AVR_TOOLCHAIN_DIRECTORY)bin/avr-objdump
+SIZE := $(AVR_TOOLCHAIN_DIRECTORY)bin/avr-size
+STRIP := $(AVR_TOOLCHAIN_DIRECTORY)bin/avr-strip
+AVRDUDE := avrdude
+
+HALGEN := /home/joe/Eigene_Dokumente/Programmieren/AVR/HALGen/halgen
+
+DATASHEET_DIRECTORY := /home/joe/Datasheets/uC/AVR/
+#DATASHEET_DIRECTORY := /home/joe/Elektronik/Datasheets/uC/AVR/
+
+# Options for AVRDude
+AVRDUDE_PGMR := avrispmkII
+AVRDUDE_OPTS := -V -P usb -B 2

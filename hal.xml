@@ -1,0 +1,34 @@
+<?xml version="1.0" ?>
+<HAL>
+	<templates>
+		<template name="digoutput">
+			<pin type="output" initialvalue="inactive" />
+		</template>
+		
+		<template name="digoutputinv">
+			<pin type="output" initialvalue="inactive" />
+			<activelow />
+		</template>
+		<template name="digio">
+			<pin type="io" initialstate="input" initialpullup="inactive" />
+		</template>
+	</templates>
+	
+	<portpin name="PD7" template="digoutput">
+		<description value="MOSI" />
+	</portpin>
+	<portpin name="PD6" template="digoutput">
+		<description value="SCK" />
+	</portpin>
+	<portpin name="PD5" template="digoutputinv">
+		<description value="CS" />
+	</portpin>
+	
+	<portpin name="PC4" template="digio">
+		<description value="SDA" />
+	</portpin>
+	<portpin name="PC5" template="digio">
+		<description value="SCL" />
+	</portpin>
+	
+</HAL>

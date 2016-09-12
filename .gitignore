@@ -1,0 +1,11 @@
+*.o
+.*.swp
+dissding.bin
+dissding.E
+dissding.S
+dissding.dmp
+dissding.syms
+dissding_EEPROM.hex
+dissding_Flash.hex
+dissding
+__pycache__

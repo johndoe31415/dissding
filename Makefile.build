@@ -1,0 +1,20 @@
+# Project name
+PROJNAME := dissding
+
+# MCU properties
+MCU_CLOCK := 4000000
+MCU_UNIT := atmega8
+
+# Source files
+OBJS := i2c.o rs232.o delay.o max7219.o timer.o eeprom.o movie.o
+
+LIBOBJS :=
+
+# Build options
+CFLAGS = -Wall -Werror -Wunused -Wuninitialized -Wno-inline -Os -mmcu=$(MCU) -DF_CPU=$(MCU_CLOCK)UL -g -std=c11
+
+HALINPUT := hal.xml
+
+#CFLAGS += -ffunction-sections
+#CFLAGS += -fdata-sections
+CFLAGS += -fmerge-all-constants

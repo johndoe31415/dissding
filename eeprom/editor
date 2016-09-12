@@ -1,0 +1,110 @@
+#!/usr/bin/python3
+#
+#	dissding - AVR ATmega8 MAX7219 8x8x dot matrix toy.
+#	Copyright (C) 2016-2016 Johannes Bauer
+#
+#	This file is part of dissding.
+#
+#	dissding is free software; you can redistribute it and/or modify
+#	it under the terms of the GNU General Public License as published by
+#	the Free Software Foundation; this program is ONLY licensed under
+#	version 3 of the License, later versions are explicitly excluded.
+#
+#	dissding is distributed in the hope that it will be useful,
+#	but WITHOUT ANY WARRANTY; without even the implied warranty of
+#	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#	GNU General Public License for more details.
+#
+#	You should have received a copy of the GNU General Public License
+#	along with dissding; if not, write to the Free Software
+#	Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#
+#	Johannes Bauer <joe@johannes-bauer.com>
+#
+
+import os
+import tty
+import sys
+import termios
+
+from Screen import Screen
+from Animation import Animation
+
+def getch():
+	fd = sys.stdin.fileno()
+	old_settings = termios.tcgetattr(fd)
+	try:
+		tty.setraw(sys.stdin.fileno())
+		ch = sys.stdin.read(1)
+	finally:
+		termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+	return ch
+
+filename = sys.argv[1]
+frames = [ ]
+if os.path.isfile(filename):
+	with open(filename, "r") as f:
+		for line in f:
+			frames.append(int(line.rstrip("\r\n")))
+
+autoshot = False
+framepos = len(frames)
+(x, y) = (0, 0)
+scr = Screen()
+scr.set_cursor(0, 0)
+if len(frames) > 0:
+	scr = Screen(frames[-1])
+
+while True:
+	scr.dump()
+	print("%d / %d [%s]" % (framepos, len(frames), autoshot))
+	c = getch()
+	load = False
+	if c == "w":
+		y = (y - 1) % 8
+	elif c == "s":
+		y = (y + 1) % 8
+	elif c == "a":
+		x = (x - 1) % 8
+	elif c == "d":
+		x = (x + 1) % 8
+	elif c == " ":
+		scr = scr.invert_pixel(x, y)
+		if autoshot:
+			frames.insert(framepos, int(scr))
+			framepos += 1
+	elif (c == "\x1b"):
+		break
+	elif (c == "\r"):
+		frames.insert(framepos, int(scr))
+		framepos += 1
+	elif c == "-":
+		framepos -= 1
+		load = True
+	elif c == "+":
+		framepos += 1
+		load = True
+	elif c == "x":
+		frames = frames[:framepos] + frames[framepos + 1:]
+		load = True
+	elif c == "*":
+		autoshot = not autoshot
+	elif c == "p":
+		# Playback
+		anim = Animation()
+		for frame in frames:
+			anim.add(Screen(frame), 0.1)
+		anim.dump()
+
+	if load:
+		if 0 <= framepos < len(frames):
+			scr = Screen(frames[framepos])
+	if framepos < 0:
+		framepos = 0
+	elif framepos > len(frames):
+		framepos = len(frames)
+	scr.set_cursor(x, y)
+
+with open(filename, "w") as f:
+	for frame in frames:
+		print("%d" % (frame), file = f)
